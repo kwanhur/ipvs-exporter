@@ -1,0 +1,18 @@
+sudo: required
+
+services:
+  - docker
+
+language: go
+
+go:
+- 1.14.1
+
+env:
+- GO111MODULE=on
+
+after_success:
+  - make
+  - make docker
+  - make push
+  - if [[ -n "$TRAVIS_TAG" ]]; then make crossbuild release; fi

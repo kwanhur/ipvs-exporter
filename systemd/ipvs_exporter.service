@@ -1,0 +1,17 @@
+[Unit]
+
+Description=Prometheus exporter thar exports ip_vs stats.
+Documentation=https://github.com/kwanhur/ipvs-exporter
+After=network.target
+
+
+[Service]
+
+EnvironmentFile=-/etc/default/ipvs_exporter
+User=prometheus
+ExecStart=/usr/bin/ipvs_exporter $IPVS_EXPORTER_OPTS
+Restart=on-failure
+
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,49 @@
+%define debug_package %{nil}
+
+Name:              ipvs_exporter
+Epoch:             1
+Version:           ${ipvs_exporter_version}
+Release:           1%{?dist}
+
+Summary:           Prometheus exporter that exports ip_vs stats.
+License:           MIT
+URL:               https://github.com/kwanhur/ipvs-exporter
+
+Source0:           ipvs_exporter-%{version}.tar.gz
+Source10:          ipvs_exporter.service
+Source11:          ipvs_exporter.default
+
+BuildRequires:     golang >= 1.11.0
+BuildRequires:     make
+
+%description
+Simple server that scrapes ip_vs stats and exports them via HTTP for Prometheus consumption
+
+%prep
+%setup -q -n ipvs-exporter-%{version}
+%{__cp} %{SOURCE10} %{SOURCE11} .
+
+%build
+export GOPATH=`go env GOPATH` 
+GO111MODULE=on make build
+%{__mv} `make info | grep 'Name:' | sed -E 's/^Name:\s+(.*)$/\1/'` ipvs_exporter
+
+%install
+%{__install} -p -m 0755 -d %{buildroot}%{_unitdir}
+%{__install} -p -m 0755 -d %{buildroot}%{_sysconfdir}/default
+%{__install} -p -m 0755 -d %{buildroot}%{_bindir}
+
+%{__install} -p -m 0644 ./ipvs_exporter.service %{buildroot}%{_unitdir}/ipvs_exporter.service
+%{__install} -m 0755 ./ipvs_exporter %{buildroot}%{_bindir}/ipvs_exporter 
+%{__install} -p -m 0644 ./ipvs_exporter.default %{buildroot}%{_sysconfdir}/default/ipvs_exporter
+
+%files
+%{_bindir}/ipvs_exporter
+%{_unitdir}/*
+%{_sysconfdir}/*
+
+%preun
+%systemd_preun ipvs_exporter.service
+
+%postun
+%systemd_postun
