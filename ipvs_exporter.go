@@ -3,19 +3,20 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/sirupsen/logrus"
+	"net/http"
+	"os"
+
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/prometheus/common/version"
-	"net/http"
-	"os"
+	"github.com/sirupsen/logrus"
 )
 
 var (
 	listenAddress   = flag.String("telemetry.address", ":9911", "Address to listen on for telemetry.")
 	metricPath      = flag.String("telemetry.endpoint", "/metrics", "Path under which to expose metrics.")
 	metricNamespace = flag.String("metrics.namespace", "ipvs", "Prometheus metrics namespace.")
-	showVersion     = flag.Bool("version", false, "Show version infomation and exit.")
+	showVersion     = flag.Bool("version", false, "Show version information and exit.")
 	goMetrics       = flag.Bool("go.metrics", false, "Export process and go metrics.")
 )
 
@@ -30,7 +31,7 @@ func main() {
 		fmt.Println(version.Print("ipvs_exporter"))
 		return
 	}
-	logrus.Infof("Starting ipvs_exporter :%s", version.Info())
+	logrus.Infof("Starting ipvs_exporter %s", version.Info())
 	logrus.Infof("Build context %s", version.BuildContext())
 	prometheus.Register(NewIpvsCollector(*metricNamespace))
 
@@ -43,8 +44,8 @@ func main() {
 		prometheus.Unregister(prometheus.NewGoCollector())
 	}
 
-	logrus.Infof("Providing metrics at:%s%s with namespace:%s", *listenAddress, *metricPath, *metricNamespace)
-	logrus.Infof("Scraping metrics from:%s", *metricPath)
+	logrus.Infof("Providing metrics at %s%s with namespace %s", *listenAddress, *metricPath, *metricNamespace)
+	logrus.Infof("Scraping metrics from %s", *metricPath)
 
 	http.Handle(*metricPath, promhttp.Handler())
 	http.HandleFunc("/", func(writer http.ResponseWriter, request *http.Request) {
