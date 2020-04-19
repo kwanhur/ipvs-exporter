@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
-	"github.com/moby/ipvs"
 	"syscall"
+
+	"github.com/moby/ipvs"
 )
 
 type ipvsWrapper struct {
