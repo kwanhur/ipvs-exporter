@@ -1,4 +1,4 @@
-module ipvs-exporter
+module github.com/kwanhur/ipvs-exporter
 
 go 1.14
 
