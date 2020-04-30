@@ -18,7 +18,7 @@ type ipvsMetric struct {
 
 //NewIpvsCollector a new ipvsCollector instance
 func NewIpvsCollector(namespace string) *ipvsCollector {
-	labels := []string{"address", "port", "protocol"}
+	labels := []string{"vip", "vport", "rip", "rport", "protocol"}
 	return &ipvsCollector{
 		metrics: map[string]*ipvsMetric{
 			"ipvs_active_connections": {
@@ -91,7 +91,7 @@ func (c *ipvsCollector) Collect(ch chan<- prometheus.Metric) {
 		return
 	}
 	for _, svc := range svcs {
-		labels := []string{svc.Address.String(), strconv.Itoa(int(svc.Port)), ipvs.Protocol(svc.Protocol)}
+		labels := []string{svc.Address.String(), strconv.Itoa(int(svc.Port)), "", "", ipvs.Protocol(svc.Protocol)}
 		stats := svc.Stats
 		metric := c.metrics["ipvs_active_connections"]
 		ch <- prometheus.MustNewConstMetric(metric.Desc, metric.ValType, float64(stats.Connections), labels...)
@@ -119,7 +119,8 @@ func (c *ipvsCollector) Collect(ch chan<- prometheus.Metric) {
 			logrus.Errorf("fetch destinations err:%s", err)
 		} else {
 			for _, dest := range dests {
-				labels = []string{dest.Address.String(), strconv.Itoa(int(dest.Port)), ipvs.Protocol(svc.Protocol)}
+				labels[2] = dest.Address.String()
+				labels[3] = strconv.Itoa(int(dest.Port))
 				stats := dest.Stats
 				metric = c.metrics["ipvs_active_connections"]
 				ch <- prometheus.MustNewConstMetric(metric.Desc, metric.ValType, float64(stats.Connections), labels...)
