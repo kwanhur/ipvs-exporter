@@ -8,7 +8,7 @@ cd "$rpm_build_root/.."
 project_source_dir=`pwd -P`
 
 VERSION=`cat $project_source_dir/VERSION`
-TEMPLATE="$rpm_build_root/ipvs_exporter.spec.tmpl"
+TEMPLATE="$rpm_build_root/ipvs-exporter.spec.tmpl"
 SRCRPM_OUT_DIR="$rpm_build_root/SRPMS"
 RPM_OUT_DIR="$rpm_build_root/RPMS"
 
@@ -25,7 +25,7 @@ check_build_requires() {
 }
 
 generate_rpm_spec() {
-    export ipvs_exporter_version=$VERSION
+    export ipvs-exporter-version=$VERSION
     envsubst <  "$TEMPLATE"
 }
 
@@ -34,30 +34,30 @@ prepare_manifests() {
     mkdir -p "$rpm_build_root/SPECS"
     mkdir -p "$rpm_build_root/SOURCES"
 
-    rm -f "$rpm_build_root/SOURCES/ipvs_exporter-${VERSION}.tar.gz"
-    tar -zcvf "$rpm_build_root/SOURCES/ipvs_exporter-${VERSION}.tar.gz" \
+    rm -f "$rpm_build_root/SOURCES/ipvs-exporter-${VERSION}.tar.gz"
+    tar -zcvf "$rpm_build_root/SOURCES/ipvs-exporter-${VERSION}.tar.gz" \
                 --transform "s/^\./ipvs-exporter-${VERSION}/" \
                 --exclude="SOURCES" \
                 --exclude="SPECS" \
                 --exclude=".git" \
                 .
-    generate_rpm_spec > "$rpm_build_root/SPECS/ipvs_exporter.spec"
-    cp -f "$project_source_dir/systemd/ipvs_exporter.default" "$rpm_build_root/SOURCES/ipvs_exporter.default"
-    cp -f "$project_source_dir/systemd/ipvs_exporter.service" "$rpm_build_root/SOURCES/ipvs_exporter.service"
+    generate_rpm_spec > "$rpm_build_root/SPECS/ipvs-exporter.spec"
+    cp -f "$project_source_dir/systemd/ipvs-exporter.default" "$rpm_build_root/SOURCES/ipvs-exporter.default"
+    cp -f "$project_source_dir/systemd/ipvs-exporter.service" "$rpm_build_root/SOURCES/ipvs-exporter.service"
 }
 
 build_srpm() {
     prepare_manifests || return 1
 
-    rpmbuild -bs "$rpm_build_root/SPECS/ipvs_exporter.spec" \
+    rpmbuild -bs "$rpm_build_root/SPECS/ipvs-exporter.spec" \
                 --define "%_srcrpmdir $SRCRPM_OUT_DIR" \
                 --define "%_topdir $rpm_build_root"
 }
 
 build_rpm() {
     prepare_manifests || return 1
-    yum-builddep "$rpm_build_root/SPECS/ipvs_exporter.spec" || return 1
-    rpmbuild -bb "$rpm_build_root/SPECS/ipvs_exporter.spec" \
+    yum-builddep "$rpm_build_root/SPECS/ipvs-exporter.spec" || return 1
+    rpmbuild -bb "$rpm_build_root/SPECS/ipvs-exporter.spec" \
                 --define "%_rpmdir $RPM_OUT_DIR" \
                 --define "%_topdir $rpm_build_root"
 }

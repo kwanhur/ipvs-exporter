@@ -9,7 +9,7 @@ After=network.target
 
 EnvironmentFile=-/etc/default/ipvs_exporter
 User=prometheus
-ExecStart=/usr/bin/ipvs_exporter $IPVS_EXPORTER_OPTS
+ExecStart=/usr/bin/ipvs-exporter $IPVS_EXPORTER_OPTS
 Restart=on-failure
 
 

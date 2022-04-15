@@ -127,3 +127,6 @@ Temporary Items
 
 ipvs-exporter
 .idea
+/rpm/SOURCES/
+/rpm/SPECS/
+/rpm/SRPMS/
