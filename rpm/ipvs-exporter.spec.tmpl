@@ -13,7 +13,7 @@ Source0:           ipvs_exporter-%{version}.tar.gz
 Source10:          ipvs_exporter.service
 Source11:          ipvs_exporter.default
 
-BuildRequires:     golang >= 1.11.0
+BuildRequires:     golang >= 1.18.1
 BuildRequires:     make
 
 %description
@@ -26,7 +26,7 @@ Simple server that scrapes ip_vs stats and exports them via HTTP for Prometheus 
 %build
 export GOPATH=`go env GOPATH` 
 GO111MODULE=on make build
-%{__mv} `make info | grep 'Name:' | sed -E 's/^Name:\s+(.*)$/\1/'` ipvs_exporter
+%{__mv} `make info | grep 'Name:' | sed -E 's/^Name:\s+(.*)$/\1/'` ipvs-exporter
 
 %install
 %{__install} -p -m 0755 -d %{buildroot}%{_unitdir}
