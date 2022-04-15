@@ -21,7 +21,10 @@ var (
 )
 
 func init() {
-	prometheus.Register(version.NewCollector("ipvs_exporter"))
+	err := prometheus.Register(version.NewCollector("ipvs_exporter"))
+	if err != nil {
+		logrus.Fatalf("register ipvs_exporter failed:%s", err)
+	}
 }
 
 func main() {
@@ -33,7 +36,11 @@ func main() {
 	}
 	logrus.Infof("Starting ipvs_exporter %s", version.Info())
 	logrus.Infof("Build context %s", version.BuildContext())
-	prometheus.Register(NewIpvsCollector(*metricNamespace))
+
+	err := prometheus.Register(NewIpvsCollector(*metricNamespace))
+	if err != nil {
+		logrus.Fatalf("register collector %s failed:%s", *metricNamespace, err)
+	}
 
 	if !*goMetrics {
 		prometheus.Unregister(prometheus.NewProcessCollector(prometheus.ProcessCollectorOpts{
@@ -49,13 +56,16 @@ func main() {
 
 	http.Handle(*metricPath, promhttp.Handler())
 	http.HandleFunc("/", func(writer http.ResponseWriter, request *http.Request) {
-		writer.Write([]byte(`<html>
+		_, err := writer.Write([]byte(`<html>
 			<head><title>Ipvs Exporter</title></head>
 			<body>
 			<h1>Ipvs Exporter</h1>
 			<p><a href="` + *metricPath + `">Metrics</a></p>
 			</body>
 			</html>`))
+		if err != nil {
+			logrus.Fatalf("handle request failed:%s", err)
+		}
 	})
 
 	if err := http.ListenAndServe(*listenAddress, nil); err != nil {
