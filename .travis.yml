@@ -6,7 +6,7 @@ services:
 language: go
 
 go:
-- 1.14.1
+- 1.18.1
 
 env:
 - GO111MODULE=on

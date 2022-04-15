@@ -1,7 +1,7 @@
 # ipvs-exporter
 
 [![Build Status](https://travis-ci.org/kwanhur/ipvs-exporter.svg?branch=master)](https://travis-ci.org/kwanhur/ipvs-exporter)
-[![Docker Pulls](https://img.shields.io/docker/pulls/sophos/ipvs-exporter.svg)](https://hub.docker.com/r/sophos/ipvs-exporter)
+[![Docker Pulls](https://img.shields.io/docker/pulls/kwanhur/ipvs-exporter.svg)](https://hub.docker.com/r/kwanhur/ipvs-exporter)
 [![Github All Releases](https://img.shields.io/github/downloads/kwanhur/ipvs-exporter/total.svg)](https://github.com/kwanhur/ipvs-exporter)
 [![GitHub release](https://img.shields.io/github/release/kwanhur/ipvs-exporter.svg)](https://github.com/kwanhur/ipvs-exporter)
 [![Go Report Card](https://goreportcard.com/badge/github.com/kwanhur/ipvs-exporter)](https://goreportcard.com/report/github.com/kwanhur/ipvs-exporter)
@@ -16,7 +16,7 @@ Simple server that scrapes Linux kernel module ip_vs stats through [ipvs](https:
   * [build docker image](#build-docker-image)
 * [Run](#run)
   * [run binary](#run-binary)
-  * [run docker image](#run-docker-image)
+  * [run docker image](#run-docker)
 * [Environment variables](#environment-variables)
 * [Authors](#authors)
 * [Copyright and License](#copyright-and-license)
@@ -80,11 +80,11 @@ docker run  -ti --rm kwanhur/ipvs-exporter
 
 This image is configurable using different env variables
 
-Variable name | Default     | Description
-------------- | ----------- | --------------
-METRICS_ENDPOINT | /metrics  | Metrics endpoint exportation URI
-METRICS_ADDR | :9911 | Metrics exportation address:port
-METRICS_NS | ipvs | Prometheus metrics Namespaces
+| Variable name    | Default  | Description                      |
+|------------------|----------|----------------------------------|
+| METRICS_ENDPOINT | /metrics | Metrics endpoint exportation URI |
+| METRICS_ADDR     | :9911    | Metrics exportation address:port |
+| METRICS_NS       | ipvs     | Prometheus metrics Namespaces    |
 
 [Back to TOC](#table-of-contents)
 
