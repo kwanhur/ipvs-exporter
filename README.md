@@ -8,6 +8,8 @@
 
 Simple server that scrapes Linux kernel module ip_vs stats through [ipvs](https://github.com/moby/ipvs) and exports them via HTTP for Prometheus consumption
 
+This repo starts with [nginx-vts-exporter](https://github.com/hnlq715/nginx-vts-exporter), many thanks to [hnlq715](https://github.com/hnlq715).
+
 ## Table of Contents
 * [Dependency](#dependency)
 * [Download](#download)
