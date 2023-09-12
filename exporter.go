@@ -21,12 +21,16 @@ func NewIpvsCollector(namespace string) *ipvsCollector {
 	labels := []string{"vip", "vport", "rip", "rport", "protocol"}
 	return &ipvsCollector{
 		metrics: map[string]*ipvsMetric{
+			"ipvs_connections": {
+				Desc:    prometheus.NewDesc(prometheus.BuildFQName(namespace, "", "connections"), "ipvs connections counter", labels, nil),
+				ValType: prometheus.CounterValue,
+			},
 			"ipvs_active_connections": {
-				Desc:    prometheus.NewDesc(prometheus.BuildFQName(namespace, "", "active_connections"), "ipvs active connection counter", labels, nil),
+				Desc:    prometheus.NewDesc(prometheus.BuildFQName(namespace, "", "active_connections"), "ipvs current active connection", labels, nil),
 				ValType: prometheus.GaugeValue,
 			},
 			"ipvs_inactive_connections": {
-				Desc:    prometheus.NewDesc(prometheus.BuildFQName(namespace, "", "inactive_connections"), "ipvs inactive connection counter", labels, nil),
+				Desc:    prometheus.NewDesc(prometheus.BuildFQName(namespace, "", "inactive_connections"), "ipvs current inactive connection", labels, nil),
 				ValType: prometheus.GaugeValue,
 			},
 			"ipvs_rate_cps": {
@@ -93,7 +97,7 @@ func (c *ipvsCollector) Collect(ch chan<- prometheus.Metric) {
 	for _, svc := range svcs {
 		labels := []string{svc.Address.String(), strconv.Itoa(int(svc.Port)), "", "", ipvs.Protocol(svc.Protocol)}
 		stats := svc.Stats
-		metric := c.metrics["ipvs_active_connections"]
+		metric := c.metrics["ipvs_connections"]
 		ch <- prometheus.MustNewConstMetric(metric.Desc, metric.ValType, float64(stats.Connections), labels...)
 		metric = c.metrics["ipvs_rate_cps"]
 		ch <- prometheus.MustNewConstMetric(metric.Desc, metric.ValType, float64(stats.CPS), labels...)
@@ -123,7 +127,7 @@ func (c *ipvsCollector) Collect(ch chan<- prometheus.Metric) {
 				labels[3] = strconv.Itoa(int(dest.Port))
 				stats := dest.Stats
 				metric = c.metrics["ipvs_active_connections"]
-				ch <- prometheus.MustNewConstMetric(metric.Desc, metric.ValType, float64(stats.Connections), labels...)
+				ch <- prometheus.MustNewConstMetric(metric.Desc, metric.ValType, float64(dest.ActiveConnections), labels...)
 				metric = c.metrics["ipvs_inactive_connections"]
 				ch <- prometheus.MustNewConstMetric(metric.Desc, metric.ValType, float64(dest.InactiveConnections), labels...)
 				metric = c.metrics["ipvs_rate_cps"]
